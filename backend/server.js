@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const Name = require('./NameModal');
+const func = require('./func');
 
 const app = express();
 
@@ -26,19 +27,23 @@ db.once('open', () => {
   console.log('Connected to MongoDB database');
 });
 
-app.post('/api/names',  (req, res) => {
-  const { name } = req.body;
+app.post('/api/names', async (req, res) => {
+  console.log("upar wala");
+  console.log(req.body);
   try {
-    const newName =  Name.create({ name });
+    const newName =  await Name.create( req.body );
     console.log(newName);
     res.status(201).json(newName); // Return the created object in the response
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Failed to insert name.' });
   }
 });
 
-
 app.get('/api/names', async (req, res) => {
+  // console.log(req);
+  // console.log(res);
+  console.log("niche wala");
   try {
     const names = await Name.find();
     res.json(names);
@@ -46,6 +51,10 @@ app.get('/api/names', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve names.' });
   }
 });
+
+app.get("/", (req, res)=>{
+  res.send("chal gya!!!")
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
